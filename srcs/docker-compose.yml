@@ -1,0 +1,132 @@
+version: '3.8'
+
+services:
+  nginx:
+    container_name: nginx
+    build: ./requirements/nginx
+    image: nginx
+    depends_on:
+      - adminer
+      - redis
+    ports:
+      - 433:433
+    volumes:
+      - wordpress:/var/www/html
+    restart: always
+    networks:
+      - network
+
+  mariadb:
+    container_name: mariadb
+    build: ./requirements/mariadb
+    image: mariadb
+    volumes:
+      - mariadb:/var/lib/mysql
+    restart: always
+    networks:
+      - network
+  
+  wordpress:
+    container_name: wordpress
+    image: wordpress
+    depends_on:
+      - mariadb
+    build:
+      context: ./requirements/wordpress
+      dockerfile: Dockerfile
+    restart: always
+    volumes:
+      - wordpress:/var/www/html
+    networks:
+      - network
+    
+  ftp:
+    container_name: ftp
+    image: ftp
+    build: ./requirements/bonus/ftp/.
+    depends_on:
+      - wordpress
+    volumes:
+      - wordpress:/var/www/html
+    ports:
+      - "21:21"
+      - "20:20"
+      - "40000-40005:40000-40005"
+    networks:
+      - network
+    restart: always
+  
+  redis:
+    container_name: redis
+    image: redis
+    build: ./requirements/bonus/redis/.
+    depends_on:
+      - wordpress
+    ports:
+      - "6379:6379"
+    restart: always
+    volumes:
+      - wordpress:/var/www/html
+    networks:
+      - network
+
+  adminer:
+    container_name: adminer
+    image: adminer
+    build: ./requirements/bonus/adminer/.
+    depends_on:
+      - mariadb
+    ports:
+      - "600:80"
+    restart: always
+    volumes:
+      - wordpress:/var/www/html
+    networks:
+      - network
+  
+  cadvisor:
+    container_name: cadvisor
+    build: ./requirements/bonus/cadvisor/.
+    image: cadvisor
+    ports:
+      - "8080:8080"
+    networks:
+      - network
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    restart: always
+
+  website:
+    container_name: website
+    build: ./requirements/bonus/websites/.
+    image: website:42
+    ports:
+      - "3000:3000"
+    networks:
+      - network
+    restart: always
+
+volumes:
+  mariadb:
+    name: mariadb
+    driver: local
+    driver_opts:
+      type: none
+      device: /$HOME/data/mysql
+      o: bind
+  
+  wordpress:
+    name: wordpress
+    driver: local
+    driver_opts:
+      type: none
+      device: /$HOME/data/wordpress
+      o: bind
+
+networks:
+  network:
+    driver: bridge
+    name: inception
