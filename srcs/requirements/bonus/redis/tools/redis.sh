@@ -17,5 +17,4 @@ else
     echo "Backup already exists. No changes made to redis.conf."
 fi
 
-# protected mode?
-redis-server --protected-mode yes
+redis-server --protected-mode no
