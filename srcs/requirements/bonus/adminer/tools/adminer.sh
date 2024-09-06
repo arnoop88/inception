@@ -7,4 +7,4 @@ chmod 755 /var/www/html/adminer.php
 cd /var/www/html || exit
 rm -f index.html
 
-php -5 "0.0.0.0:80"
+php -5 "0.0.0.0:2080"
