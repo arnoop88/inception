@@ -1,27 +1,30 @@
-#!/bin/bash
+#!/bin/sh
 
-mysqld --initialize
+mysql_install_db
 
-service mysql start
+/etc/init.d/mysql start
 
-if [ -d "/var/lib/mysql/$MYSQL_DATABASE" ]; then
-    echo "MySQL is already installed"
+if [ -d "/var/lib/mysql/$MYSQL_DATABASE" ]
+then
+
+	echo "Database already exists"
 else
-    echo "Setting up MySQL database..."
 
-    mysql -e "UPDATE mysql.user SET Password = PASSWORD('$MYSQL_ROOT_PASSWORD') WHERE User = 'root';"
-    mysql -e "DELETE FROM mysql.user WHERE User='';"
-    mysql -e "DROP DATABASE IF EXISTS test;"
-    mysql -e "DELETE FROM mysql.db WHERE Db = 'test' OR Db = 'test\\_%';"
-    mysql -e "FLUSH PRIVILEGES;"
+mysql_secure_installation << _EOF_
 
-    mysql -e "CREATE DATABASE IF NOT EXISTS $MYSQL_DATABASE;"
-    mysql -e "GRANT ALL ON $MYSQL_DATABASE.* TO '$MYSQL_USER'@'%' IDENTIFIED BY '$MYSQL_PASSWORD';"
-    mysql -e "FLUSH PRIVILEGES;"
+Y
+'$MYSQL_ROOT_PASSWORD'
+'$MYSQL_ROOT_PASSWORD'
+Y
+n
+Y
+Y
+_EOF_
 
-    echo "MySQL setup complete."
+echo "GRANT ALL ON *.* TO 'root'@'%' IDENTIFIED BY '$MYSQL_ROOT_PASSWORD'; FLUSH PRIVILEGES;" | mysql -uroot
+echo "CREATE DATABASE IF NOT EXISTS $MYSQL_DATABASE; GRANT ALL ON $MYSQL_DATABASE.* TO '$MYSQL_USER'@'%' IDENTIFIED BY '$MYSQL_PASSWORD'; FLUSH PRIVILEGES;" | mysql -u root
 fi
 
-service mysql stop
+/etc/init.d/mysql stop
 
 exec "$@"

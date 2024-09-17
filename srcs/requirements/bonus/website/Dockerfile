@@ -10,4 +10,4 @@ WORKDIR /home/app
 RUN npm init -y && \
 	npm install express -y
 
-CMD ["node", "server.js"]ss
+CMD ["node", "server.js"]
