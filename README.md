@@ -103,9 +103,9 @@ The project is organized as follows:
 	- Rock Paper Scissors Game: `http://localhost:3000/`
 
 ## Resources
-- Docker Documentation [https://docs.docker.com/build/concepts/overview/]
-- Docker Compose Documentation[https://docs.docker.com/compose/compose-application-model/]
-- Wordpress[https://wordpress.org/]
-- Adminer[https://www.adminer.org/]
-- cAdvisor[https://github.com/google/cadvisor]
-- Redis[https://redis.io/]
+- [Docker Documentation](https://docs.docker.com/build/concepts/overview/)
+- [Docker Compose Documentation](https://docs.docker.com/compose/compose-application-model/)
+- [Wordpress](https://wordpress.org/)
+- [Adminer](https://www.adminer.org/)
+- [cAdvisor](https://github.com/google/cadvisor)
+- [Redis](https://redis.io/)
